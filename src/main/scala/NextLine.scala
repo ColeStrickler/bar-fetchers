@@ -99,11 +99,16 @@ class SingleNextLinePrefetcher(params: SingleNextLinePrefetcherParams)(implicit 
 
 
 case class MultiNextLinePrefetcherParams(
-  singles: Seq[SingleNextLinePrefetcherParams] = Seq.fill(4) { SingleNextLinePrefetcherParams() },
+  streams: Int = 4,
   handleVA: Boolean = false
+)(
+  val singles: Seq[SingleNextLinePrefetcherParams] =
+    Seq.fill(streams)(SingleNextLinePrefetcherParams())
 ) extends CanInstantiatePrefetcher {
   def desc() = "Multi Next-Line Prefetcher"
-  def instantiate()(implicit p: Parameters) = Module(new MultiNextLinePrefetcher(this)(p))
+
+  def instantiate()(implicit p: Parameters) =
+    Module(new MultiNextLinePrefetcher(this)(p))
 }
 
 class MultiNextLinePrefetcher(params: MultiNextLinePrefetcherParams)(implicit p: Parameters) extends AbstractPrefetcher()(p) {
